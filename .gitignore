@@ -1,0 +1,20 @@
+# installed packages (npm install brings them back)
+node_modules/
+
+# secrets - never commit the real .env, only .env.example
+.env
+.env.*
+!.env.example
+
+# sqlite database files (they are created when the app runs)
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+# logs and editor/OS junk
+npm-debug.log*
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskPilot AI</title>
+  <meta name="description" content="TaskPilot AI turns plain sentences into tasks, schedules and conflict-free days." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237c5cff'/%3E%3Cpath d='M9 17l5 5 9-11' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== LANDING PAGE ===================== -->
+  <section id="landing" class="landing">
+    <nav class="landing-nav">
+      <a class="brand" href="#/">
+        <span class="brand-mark">TP</span>
+        <span>TaskPilot AI</span>
+      </a>
+      <a class="button button-primary" href="#/dashboard">Open dashboard</a>
+    </nav>
+
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Amazon Developer Hackathon 2026 &middot; Alexa+ track</p>
+        <h1>Say what you need to do. TaskPilot plans the day.</h1>
+        <p class="hero-text">
+          Write a normal sentence like "finish my DSA assignment, practice coding for 2 hours and meeting at 4 PM".
+          TaskPilot creates the tasks, builds a schedule and tells you when two things overlap.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#/dashboard">Open dashboard</a>
+          <a class="button button-ghost" href="#/mcp">See the MCP tools</a>
+        </div>
+      </div>
+
+      <div class="hero-preview" aria-label="Example conversation">
+        <p class="preview-label">Example conversation</p>
+        <div class="chat-message user"><div class="bubble">I have to finish my DSA assignment, practice coding for 2 hours, and attend a meeting at 4 PM.</div></div>
+        <div class="chat-message ai"><div class="bubble">I created three tasks and put the meeting at 16:00. Your coding practice has no time yet, want me to suggest a free slot?</div></div>
+      </div>
+    </div>
+
+    <div class="features">
+      <article class="feature-card">
+        <h3>Understands normal language</h3>
+        <p>Several tasks in one message, with priorities, deadlines and durations picked out for you.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Does real actions</h3>
+        <p>The assistant calls backend tools that save to a database. It is not just a chatbot.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Catches conflicts</h3>
+        <p>Overlapping tasks are flagged and the planner suggests free slots you can apply in one click.</p>
+      </article>
+      <article class="feature-card">
+        <h3>Has an MCP server</h3>
+        <p>The same tools are available to MCP clients over Streamable HTTP at <code>/mcp</code>.</p>
+      </article>
+    </div>
+
+    <p class="landing-note">
+      Honest note: the Alexa+ experience in this project is a <strong>simulation</strong> inside the web app.
+      The MCP server is real, but nothing here is connected to a real Alexa+ device or service.
+    </p>
+  </section>
+
+  <!-- ===================== APP SHELL ===================== -->
+  <div id="app-shell" class="app-shell" hidden>
+
+    <aside id="sidebar" class="sidebar">
+      <a class="brand" href="#/">
+        <span class="brand-mark">TP</span>
+        <span>TaskPilot AI</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="#/dashboard" data-view="dashboard">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a class="nav-link" href="#/tasks" data-view="tasks">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Tasks
+        </a>
+        <a class="nav-link" href="#/planner" data-view="planner">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Daily planner
+        </a>
+        <a class="nav-link" href="#/assistant" data-view="assistant">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          AI assistant
+        </a>
+        <a class="nav-link" href="#/mcp" data-view="mcp">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+          Alexa+ and MCP
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p id="gemini-status" class="status-chip">Checking AI status...</p>
+        <a class="sidebar-home" href="#/">Back to home</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="menu-toggle" class="icon-button menu-toggle" type="button" aria-label="Open menu">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 id="page-title">Dashboard</h1>
+        <button id="new-task-button" class="button button-primary" type="button">New task</button>
+      </header>
+
+      <main class="content">
+
+        <!-- ---------- Dashboard ---------- -->
+        <section id="view-dashboard" class="view" hidden>
+          <div id="dashboard-stats" class="stat-grid"></div>
+          <div class="two-column">
+            <div class="panel">
+              <h2 class="panel-title">Today</h2>
+              <div id="dashboard-today"></div>
+            </div>
+            <div class="panel">
+              <h2 class="panel-title">Pending by priority</h2>
+              <div id="dashboard-priorities"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------- Tasks ---------- -->
+        <section id="view-tasks" class="view" hidden>
+          <form id="task-filters" class="filters" autocomplete="off">
+            <input id="filter-search" type="search" placeholder="Search tasks" aria-label="Search tasks" />
+            <select id="filter-status" aria-label="Filter by status">
+              <option value="">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+            <select id="filter-priority" aria-label="Filter by priority">
+              <option value="">All priorities</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <input id="filter-date" type="date" aria-label="Filter by date" />
+            <button id="filter-clear" class="button button-ghost" type="button">Clear</button>
+          </form>
+          <p id="task-count" class="muted"></p>
+          <div id="task-list" class="task-list"></div>
+        </section>
+
+        <!-- ---------- Planner ---------- -->
+        <section id="view-planner" class="view" hidden>
+          <div class="planner-controls">
+            <button id="planner-prev" class="button button-ghost" type="button" aria-label="Previous day">&larr;</button>
+            <input id="planner-date" type="date" aria-label="Plan date" />
+            <button id="planner-next" class="button button-ghost" type="button" aria-label="Next day">&rarr;</button>
+            <button id="planner-today" class="button button-ghost" type="button">Today</button>
+          </div>
+          <div id="planner-summary" class="stat-grid stat-grid-small"></div>
+          <div class="two-column">
+            <div class="panel">
+              <h2 class="panel-title">Timeline</h2>
+              <div id="planner-timeline"></div>
+            </div>
+            <div class="stack">
+              <div class="panel">
+                <h2 class="panel-title">Conflicts</h2>
+                <div id="planner-conflicts"></div>
+              </div>
+              <div class="panel">
+                <div class="panel-header">
+                  <h2 class="panel-title">Suggestions</h2>
+                  <button id="apply-suggestions" class="button button-primary button-small" type="button" hidden>Apply suggestions</button>
+                </div>
+                <div id="planner-suggestions"></div>
+              </div>
+              <div class="panel">
+                <h2 class="panel-title">No time set</h2>
+                <div id="planner-unscheduled"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------- AI assistant ---------- -->
+        <section id="view-assistant" class="view" hidden>
+          <div class="chat-panel">
+            <div id="chat-banner" class="banner" hidden></div>
+            <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+            <div id="chat-examples" class="chips">
+              <button class="chip" type="button" data-prompt="I have to finish my DSA assignment, practice coding for 2 hours, and attend a meeting at 4 PM.">DSA, coding and a 4 PM meeting</button>
+              <button class="chip" type="button" data-prompt="What does my day look like today? Are there any conflicts?">What does my day look like?</button>
+              <button class="chip" type="button" data-prompt="Suggest a better schedule for today.">Suggest a schedule</button>
+              <button class="chip" type="button" data-prompt="Mark my meeting as done.">Mark the meeting as done</button>
+            </div>
+            <form id="chat-form" class="chat-form">
+              <textarea id="chat-input" rows="2" maxlength="1000" placeholder="Tell TaskPilot what you need to do..." aria-label="Message"></textarea>
+              <div class="chat-form-buttons">
+                <button id="chat-clear" class="button button-ghost" type="button">Clear chat</button>
+                <button id="chat-send" class="button button-primary" type="submit">Send</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ---------- Alexa+ / MCP ---------- -->
+        <section id="view-mcp" class="view" hidden>
+          <div class="banner banner-info">
+            <strong>What is real and what is simulated:</strong>
+            the MCP server below is real and self-hosted. The "Alexa+ simulator" is only a web demo that sends your
+            sentence to the same assistant. This app is <strong>not</strong> connected to a real Alexa+ device or service.
+          </div>
+
+          <div class="two-column">
+            <div class="panel">
+              <h2 class="panel-title">MCP server</h2>
+              <p class="muted">Transport: <span id="mcp-transport">...</span></p>
+              <p>Endpoint</p>
+              <code id="mcp-endpoint" class="code-block">...</code>
+              <p id="mcp-auth-note" class="muted"></p>
+              <h3 class="panel-subtitle">Tools</h3>
+              <ul id="mcp-tool-list" class="tool-list"></ul>
+            </div>
+
+            <div class="stack">
+              <div class="panel">
+                <h2 class="panel-title">Try a tool call</h2>
+                <p class="muted">This sends a real JSON-RPC <code>tools/call</code> request to <code>/mcp</code>.</p>
+                <label class="field">
+                  <span>Tool</span>
+                  <select id="mcp-tool-select"></select>
+                </label>
+                <label class="field">
+                  <span>Arguments (JSON)</span>
+                  <textarea id="mcp-args" rows="5" spellcheck="false">{}</textarea>
+                </label>
+                <button id="mcp-run" class="button button-primary" type="button">Run tool</button>
+                <pre id="mcp-output" class="output" aria-live="polite">The response will appear here.</pre>
+              </div>
+
+              <div class="panel">
+                <h2 class="panel-title">Alexa+ simulator</h2>
+                <p class="muted">Type what you would say out loud. This is a simulation.</p>
+                <form id="alexa-form" class="inline-form">
+                  <input id="alexa-input" type="text" maxlength="300" placeholder='Alexa, ask TaskPilot to add "call mom" at 6 PM' aria-label="What you would say" />
+                  <button id="alexa-send" class="button button-primary" type="submit">Say it</button>
+                </form>
+                <div id="alexa-output" class="alexa-output"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== DIALOGS ===================== -->
+  <dialog id="task-dialog" class="dialog">
+    <form id="task-form" autocomplete="off" novalidate>
+      <h2 id="task-dialog-title">New task</h2>
+      <input id="task-id" type="hidden" />
+
+      <label class="field">
+        <span>Title</span>
+        <input id="task-title" type="text" maxlength="200" required />
+      </label>
+      <label class="field">
+        <span>Description (optional)</span>
+        <textarea id="task-description" rows="2" maxlength="1000"></textarea>
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Priority</span>
+          <select id="task-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Deadline</span>
+          <input id="task-due-date" type="date" />
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Work on it on</span>
+          <input id="task-scheduled-date" type="date" />
+        </label>
+        <label class="field">
+          <span>Start time</span>
+          <input id="task-start-time" type="time" />
+        </label>
+        <label class="field">
+          <span>Minutes</span>
+          <input id="task-duration" type="number" min="5" max="1440" step="5" placeholder="60" />
+        </label>
+      </div>
+
+      <p id="task-form-error" class="form-error" role="alert" hidden></p>
+
+      <div class="dialog-buttons">
+        <button id="task-cancel" class="button button-ghost" type="button">Cancel</button>
+        <button class="button button-primary" type="submit">Save task</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="dialog dialog-small">
+    <h2>Are you sure?</h2>
+    <p id="confirm-message"></p>
+    <div class="dialog-buttons">
+      <button id="confirm-cancel" class="button button-ghost" type="button">Cancel</button>
+      <button id="confirm-ok" class="button button-danger" type="button">Delete</button>
+    </div>
+  </dialog>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
